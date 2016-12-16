@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <link rel="stylesheet" type='text/css' href="https://cdn.modomu.com/assets/vendor/font-awesome-3.2.1/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../dist/castlefile.css">
+    <style type="text/css" media="screen">
+        body{
+            padding: 1em 0em;
+        }
+        .container{
+            max-width: 940px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="castlefile" id="castlefile">
+            <div class="castlefile-container">
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="../dist/castlefile.js"></script>
+    <script type="text/javascript">
+        var catlefile = new Castlefile(document.getElementById('castlefile'),{
+            maxFiles: 14
+        });
+    </script>
+</body>
+</html>

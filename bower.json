@@ -1,0 +1,12 @@
+{
+    "name": "castlefile",
+    "description": "castlefile is a javascript",
+    "main": [
+        "dist/castlefile.js",
+        "dist/castlefile.scss"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:modomu/castlefile.git"
+    }
+}
