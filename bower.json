@@ -1,12 +1,19 @@
 {
-    "name": "castlefile",
-    "description": "castlefile is a javascript",
-    "main": [
-        "dist/castlefile.js",
-        "dist/castlefile.scss"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:modomu/castlefile.git"
-    }
+  "name": "castlefile",
+  "version": "0.0.0",
+  "homepage": "https://github.com/Modomu/castlefile",
+  "authors": [
+    "Alberto Ureña <alberto.urena@modomu.com>"
+  ],
+  "description": "castlefile is a javascript",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
 }
