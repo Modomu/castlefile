@@ -5,10 +5,11 @@ Castlefile = function(element, options){
         this.thumbnails = [],
         this.hiddenFileInput = null,
         this.gallery = null,
+        this.files = [],
         this.uploadMultiple = false,
         this.startValue = null,
         this.maxFilesize = 256,
-        this.paramName = "file",
+        this.paramName = options.paramName || 'file',
         this.maxFiles = options.maxFiles || 1,
         this.clickable = true,
         this.defaultMessage = "Drop files here to upload",
@@ -16,15 +17,21 @@ Castlefile = function(element, options){
         this.FileTooBig = "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
         this.RemoveFile = "Remove file",
         this.maxFilesExceeded = "You can not upload any more files.",
-        this.initialize();
+        this.initialize(),
+        this.thumbnailsAtInit(options.thumbnails);
 };
 Castlefile.prototype.initialize=function(){
     _this = this;
+
+    //Replace 
+    this.paramName = this.paramName.replace('[]','');
+    var fileInputName = this.maxFiles === 1 ? this.paramName : this.paramName + '[]';
 
     if (_this.hiddenFileInput) {
       document.body.removeChild(_this.hiddenFileInput);
     }
     _this.hiddenFileInput = document.createElement("input");
+    _this.hiddenFileInput.setAttribute("name", fileInputName);
     _this.hiddenFileInput.setAttribute("type", "file");
     _this.hiddenFileInput.style.visibility = 'hidden';
     _this.hiddenFileInput.style.position = "absolute";
@@ -49,13 +56,23 @@ Castlefile.prototype.initialize=function(){
         }
     });
 
-    document.body.appendChild(_this.hiddenFileInput);
+    this.element.appendChild(_this.hiddenFileInput);
 
 
     _this.element.addEventListener("click", function(e) {
         _this.hiddenFileInput.click();
     })
 
+    //Append button file upload
+    buttonContainer = document.createElement("button");
+    buttonContainer.className = 'clearfix';
+
+    buttonFileInput = document.createElement("button");
+    buttonFileInput.setAttribute('id','castlefile-button');
+    buttonFileInput.className = 'btn btn-success btn-small pull-right';
+    buttonFileInput.innerHTML = '<i class="icon-upload icon-large"></i>Añadir imagen';
+    this.element.parentElement.appendChild(buttonFileInput);
+    
     _this.initialDesign(true);
 },
 Castlefile.prototype.initialDesign=function (visibility) {
@@ -66,7 +83,7 @@ Castlefile.prototype.initialDesign=function (visibility) {
         _this.gallery = null;
 
         var icon = document.createElement("i");
-        icon.className = 'icon-instagram icon-2x';
+        icon.className = 'icon-picture icon-4x';
         
         var text = document.createElement("p");
         text.appendChild(document.createTextNode(this.defaultMessage));
@@ -84,6 +101,13 @@ Castlefile.prototype.appendGallery=function () {
 
     this.element.getElementsByClassName('castlefile-container')[0].append(_this.gallery);
 },
+Castlefile.prototype.thumbnailsAtInit=function (thumbnails) {
+    for (var i = 0; i < thumbnails.length; i++) {
+        if (thumbnails[i]) {
+            this.addImageContainer(thumbnails[i]);
+        }
+    }
+},
 Castlefile.prototype.addImageContainer=function (file) {
     //If Catlefile only accepts one image, remove all
     if (_this.maxFiles === 1) {
@@ -99,20 +123,18 @@ Castlefile.prototype.addImageContainer=function (file) {
 
     //Create thumbnail
     _this.thumbnails[length] = document.createElement("li");
-    
+        
     if (_this.maxFiles === 1) {
-        _this.thumbnails[length].className = "thumbnail full-image";
+        _this.thumbnails[length].className = "full-image";
     }else{
         if (length === 0) {
-            _this.thumbnails[length].className = "thumbnail featured-image";
-        }else{
-            _this.thumbnails[length].className = "thumbnail";
+            _this.thumbnails[length].className = "featured-image";
         }
     }
 
     //Create thumbnail container
     thumbContainer = document.createElement("div");
-    thumbContainer.className = "thumbnail-container";
+    thumbContainer.className = "thumbnail";
 
     //Create img element
     imageElement = document.createElement("img");
@@ -120,13 +142,36 @@ Castlefile.prototype.addImageContainer=function (file) {
     thumbContainer.append(imageElement);
 
     //Create input hidden with value
-    hiddenInput = document.createElement("input");
-    hiddenInput.setAttribute("type", "hidden");
-    hiddenInput.setAttribute("name", "image");
-    hiddenInput.setAttribute("value", _this.startValue);
-    thumbContainer.append(hiddenInput);
+    if (this.maxFiles === 1) {
+        hiddenInput = document.createElement("input");
+        hiddenInput.setAttribute("type", "hidden");
+        hiddenInput.setAttribute("name", this.paramName);
+        thumbContainer.append(hiddenInput);
+    }else{
+        //Add input id
+        hiddenInputId = document.createElement("input");
+        hiddenInputId.setAttribute("type", "hidden");
+        hiddenInputId.setAttribute("name", this.paramName + '['+length+'][id]');
+        hiddenInputId.setAttribute("value", file['id'] || '');
+        thumbContainer.append(hiddenInputId);
+        //Add input src
+        hiddenInput = document.createElement("input");
+        hiddenInput.setAttribute("type", "hidden");
+        hiddenInput.setAttribute("name", this.paramName + '['+length+'][src]');
+        hiddenInput.setAttribute("value", file['src'] || '');
+        thumbContainer.append(hiddenInput);
+        //Add input sort position
+        hiddenInputPos = document.createElement("input");
+        hiddenInputPos.setAttribute("type", "hidden");
+        hiddenInputPos.setAttribute("name", this.paramName + '['+length+'][sort_position]');
+        hiddenInputPos.setAttribute("value", length + 1);
+        thumbContainer.append(hiddenInputPos);
 
-    _this.thumbnails[length].append(thumbContainer);
+        console.log(file);
+        if (typeof file === "object" && file['src'] !== undefined) {
+            file = file['src'];
+        }
+    }
 
     //Create caption
     var caption = document.createElement("div");
@@ -156,7 +201,7 @@ Castlefile.prototype.addImageContainer=function (file) {
         }
 
         if (_this.thumbnails.length) {
-            _this.thumbnails[0].className = "thumbnail featured-image";
+            _this.thumbnails[0].className = "featured-image";
         }
     });
     
@@ -167,20 +212,34 @@ Castlefile.prototype.addImageContainer=function (file) {
     caption_links.append(icon);
     caption_content.append(caption_links);
     caption.append(caption_content);
-    _this.thumbnails[length].append(caption);
+    thumbContainer.append(caption);
+    _this.thumbnails[length].append(thumbContainer);
 
     //Append thumbnail to gallery container
     _this.gallery.append(_this.thumbnails[length]);
 
-    this.preview(file, imageElement);
+    if (typeof file === "object") {
+        this.preview(file, imageElement);
+    }else{
+        hiddenInput.setAttribute('value',file);
+        imageElement.setAttribute('src',file);
+    }
 
     _this.thumbnailsSortPosition();
 },
 Castlefile.prototype.preview=function (file, image) {
     var reader = new FileReader();
+    var _this = this;
 
     reader.onload = function (e) {
         image.setAttribute("src", e.target.result);
+        if (_this.maxFiles > 1) {
+            hiddenInputUpload = document.createElement("input");
+            hiddenInputUpload.setAttribute("type", "hidden");
+            hiddenInputUpload.setAttribute("name", "upload["+file.name+"]");
+            hiddenInputUpload.setAttribute("value", e.target.result);
+            image.parentElement.append(hiddenInputUpload);
+        }
     }
 
     reader.readAsDataURL(file);

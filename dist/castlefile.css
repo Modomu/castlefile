@@ -4,20 +4,21 @@
     height: 240px;
     position: relative;
     text-align: center;
-    overflow: scroll;
+    overflow: auto;
     cursor: pointer;
+}
+#castlefile-button{
+  margin: 10px 0px;
 }
 .castlefile-container{
     padding: 2em 1em 1em 1em;
     box-sizing: border-box;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
     width: 100%;
 }
-.castlefile-container .icon-instagram{
-    font-size: 6rem;
-    color: #e1e6ef;
+.castlefile-container .icon-picture{
+  color: #e1e6ef;
+  font-size: 110px;
+  line-height: 1.4;
 }
 .castlefile-container p{
     color: #BAC4D8;
@@ -25,50 +26,59 @@
 }
 
 ul.castlefile-gallery{
-    display: inline-block;
-    list-style: none;
-    margin: 0;
-    position: relative;
-    width: 100%;
+  display: inline-block;
+  list-style: none;
+  margin: 0;
+  position: relative;
+  margin-left: -10px;
+  margin-bottom: -10px;
+  width: 100%;
 }
-ul.castlefile-gallery > li.thumbnail{
-    box-sizing: border-box;
-    display: block;
-    text-align: center;
-    margin: 0;
-    float: left;
-    position: relative;
-    list-style: none;
-    margin: 0px 10px 10px 0px;
-    padding: 0px;
-    width: 25%;
-}
-ul.castlefile-gallery > li.thumbnail.featured-image{ width: 50%; }
-ul.castlefile-gallery > li.thumbnail.full-image{ width: 100%; max-height: 100%; }
-ul.castlefile-gallery > li.thumbnail > .thumbnail-container{
-    background: #fafbfc;
-    display: block;
-    position: relative;
-    padding: 0px;
-    margin: 0;
-    padding-bottom: 100%;
-    width: 100%;
+ul.castlefile-gallery > li{
+  box-sizing: border-box;
+  display: block;
+  text-align: center;
+  margin: 0;
+  float: left;
+  position: relative;
+  list-style: none;
+  margin: 0px 0px 10px 0px;
+  padding-left: 10px;
+  width: 20%;
 }
 
-ul.castlefile-gallery > li.thumbnail img{
-    position: absolute;
-    display: block;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    margin: auto;
-    max-height: 100%;
-    max-width: 100%;
-    background: #D9D9D9;
+ul.castlefile-gallery > li.featured-image{ width: 40%; }
+ul.castlefile-gallery > li.full-image{ width: 100%; }
+ul.castlefile-gallery > li.full-image > .thumbnail{
+    padding-bottom: 50%;
+    position: relative;
 }
 
-ul.castlefile-gallery > li.thumbnail .caption{
+ul.castlefile-gallery > li > .thumbnail{
+  background: #fafbfc;
+  display: block;
+  position: relative;
+  padding: 0px;
+  margin: 0;
+  padding-bottom: 100%;
+  width: 100%;
+}
+ul.castlefile-gallery > li.sortable-placeholder > .thumbnail{
+  background: #D9D9D9;
+}
+ul.castlefile-gallery > li > .thumbnail img{
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto;
+  max-height: 100%;
+  max-width: 100%;
+  background: #D9D9D9;
+}
+ul.castlefile-gallery > li .caption{
     background: rgba(0,0,0,0.7);
     position: absolute;
     top: 0;
@@ -82,11 +92,11 @@ ul.castlefile-gallery > li.thumbnail .caption{
     transition: all 0.5s ease;
     width: 100%;
 }
-ul.castlefile-gallery > li.thumbnail:hover .caption{ 
+ul.castlefile-gallery > li:hover .caption{ 
     opacity: 1;
     visibility: visible; 
 }
-ul.castlefile-gallery > li.thumbnail .caption > .caption-content{
+ul.castlefile-gallery > li .caption > .caption-content{
     position: absolute;
     top: 50%;
     margin-top: -2em;
