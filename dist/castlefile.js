@@ -11,7 +11,7 @@ Castlefile = function(element, options){
         this.maxFilesize = 256,
         this.paramName = options.paramName || 'file',
         this.maxFiles = options.maxFiles || 1,
-        this.clickable = true,
+        this.clickable = options.clickable,
         this.defaultMessage = "Drop files here to upload",
         this.fallbackMessage = "Your browser does not support drag'n'drop file uploads.",
         this.FileTooBig = "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
@@ -58,19 +58,26 @@ Castlefile.prototype.initialize=function(){
 
     this.element.appendChild(_this.hiddenFileInput);
 
-
-    _this.element.addEventListener("click", function(e) {
-        _this.hiddenFileInput.click();
-    })
+    //Open file browser on element click
+    if (this.clickable !== false) {
+        _this.element.addEventListener("click", function(e) {
+            _this.hiddenFileInput.click();
+        })
+    }
 
     //Append button file upload
     buttonContainer = document.createElement("button");
     buttonContainer.className = 'clearfix';
 
-    buttonFileInput = document.createElement("button");
+    buttonFileInput = document.createElement("a");
     buttonFileInput.setAttribute('id','castlefile-button');
+    buttonFileInput.setAttribute('href','javascript:void');
     buttonFileInput.className = 'btn btn-success btn-small pull-right';
     buttonFileInput.innerHTML = '<i class="icon-upload icon-large"></i>Añadir imagen';
+    buttonFileInput.addEventListener('click', function (e) {
+        _this.hiddenFileInput.click();
+    });
+
     this.element.parentElement.appendChild(buttonFileInput);
     
     _this.initialDesign(true);
@@ -98,10 +105,15 @@ Castlefile.prototype.initialDesign=function (visibility) {
 Castlefile.prototype.appendGallery=function () {
     _this.gallery = document.createElement("ul");
     _this.gallery.className = 'castlefile-gallery';
-
-    this.element.getElementsByClassName('castlefile-container')[0].append(_this.gallery);
+    if (this.element.getElementsByClassName('castlefile-container').length) {
+        this.element.getElementsByClassName('castlefile-container')[0].append(_this.gallery);
+    }
 },
 Castlefile.prototype.thumbnailsAtInit=function (thumbnails) {
+    if (thumbnails instanceof Array === false) {
+        thumbnails=[];
+    }
+
     for (var i = 0; i < thumbnails.length; i++) {
         if (thumbnails[i]) {
             this.addImageContainer(thumbnails[i]);
@@ -167,7 +179,6 @@ Castlefile.prototype.addImageContainer=function (file) {
         hiddenInputPos.setAttribute("value", length + 1);
         thumbContainer.append(hiddenInputPos);
 
-        console.log(file);
         if (typeof file === "object" && file['src'] !== undefined) {
             file = file['src'];
         }
@@ -243,7 +254,6 @@ Castlefile.prototype.preview=function (file, image) {
     }
 
     reader.readAsDataURL(file);
-
 },
 Castlefile.prototype.thumbnailsSortPosition=function () {
     var length = _this.gallery.childNodes.length;
@@ -252,10 +262,12 @@ Castlefile.prototype.thumbnailsSortPosition=function () {
         var pos = i + 1;
         var thumb_id = 'gallery-cell-' + pos;
 
-        _this.thumbnails[i].setAttribute("id", thumb_id);
-        _this.thumbnails[i].setAttribute("castlefile-pos", pos);
-        
-        var link = _this.thumbnails[i].getElementsByClassName('link-remove');
-        link[0].setAttribute("href", thumb_id);
+        if (_this.thumbnails[i].length) {
+            _this.thumbnails[i].setAttribute("id", thumb_id);
+            _this.thumbnails[i].setAttribute("castlefile-pos", pos);
+            
+            var link = _this.thumbnails[i].getElementsByClassName('link-remove');
+            link[0].setAttribute("href", thumb_id);
+        }
     }
 }
